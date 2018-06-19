@@ -5,11 +5,8 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
-import android.webkit.WebView
-import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioButton
-import android.widget.Toast
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
@@ -20,6 +17,7 @@ import org.caojun.rcn.utils.ChineseNameUtils
 import org.caojun.rcn.utils.DiaryUtils
 import com.google.android.gms.ads.InterstitialAd
 import kotlinx.android.synthetic.main.activity_main.*
+import org.caojun.dialog.WebViewDialog
 import org.caojun.dice.DiceActivity
 import org.caojun.rcn.R
 import org.caojun.rcn.ormlite.Diary
@@ -41,15 +39,6 @@ class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
         setContentView(R.layout.activity_main)
 
         initAd()
-
-//        var btnSurname: Button = findViewById(R.id.btnSurname)
-//        var btnName: Button = findViewById(R.id.btnName)
-//        var etSurname: EditText = findViewById(R.id.etSurname)
-//        var etName: EditText = findViewById(R.id.etName)
-//        var rgSurname: MultiRadioGroup = findViewById(R.id.rgSurname)
-//        var rgName: MultiRadioGroup = findViewById(R.id.rgName)
-//        var webView: WebView = findViewById(R.id.webView)
-//        btnGenerate = findViewById(R.id.btnGenerate)
 
         val surnameType: Array<out String> = resources.getStringArray(R.array.surname_type)
         val rbSurnames: Array<RadioButton?> = arrayOfNulls(surnameType.size)
@@ -81,17 +70,17 @@ class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
             etName.isEnabled = index == group.childCount - 1
         }
 
-        btnSurname.setOnClickListener { showExplain(webView, etSurname.text.toString()) }
+        btnSurname.setOnClickListener { showExplain(etSurname.text.toString()) }
 
         btnSurname.setOnLongClickListener {
-            showFullName(etSurname, etName, webView)
+            showFullName(etSurname, etName)
             true
         }
 
-        btnName.setOnClickListener { showExplain(webView, etName.text.toString()) }
+        btnName.setOnClickListener { showExplain(etName.text.toString()) }
 
         btnName.setOnLongClickListener {
-            showExplain(webView, etName.text.toString(), true)
+            showExplain(etName.text.toString(), true)
             true
         }
 
@@ -125,11 +114,11 @@ class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
         startActivityForResult(intent, DiceActivity.RequestCode_Dice)
     }
 
-    private fun showExplain(webView: WebView, text: String) {
-        showExplain(webView, text, false)
+    private fun showExplain(text: String) {
+        showExplain(text, false)
     }
 
-    private fun showExplain(webView: WebView, text: String, isFullName: Boolean) {
+    private fun showExplain(text: String, isFullName: Boolean) {
         if (TextUtils.isEmpty(text)) {
             return
         }
@@ -140,10 +129,11 @@ class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
             val index = 2
             url = urls[index] + text
         }
-        webView.loadUrl(url)
+//        webView.loadUrl(url)
+        WebViewDialog.show(this, url)
     }
 
-    private fun showFullName(etSurname: EditText, etName: EditText, webView: WebView) {
+    private fun showFullName(etSurname: EditText, etName: EditText) {
         val surname = etSurname.text.toString()
         if (TextUtils.isEmpty(surname)) {
             return
@@ -152,7 +142,7 @@ class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
         if (TextUtils.isEmpty(name)) {
             return
         }
-        showExplain(webView, surname + name, true)
+        showExplain(surname + name, true)
     }
 
     private fun checkButtonEnable(rgSurname:MultiRadioGroup, rgName:MultiRadioGroup) {
