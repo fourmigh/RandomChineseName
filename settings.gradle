@@ -1,0 +1,10 @@
+include ':app'
+
+include ':DiceLibrary'
+project(':DiceLibrary').projectDir = new File(settingsDir, '../CaojunLibrary/DiceLibrary')
+
+include ':WidgetLibrary'
+project(':WidgetLibrary').projectDir = new File(settingsDir, '../CaojunLibrary/WidgetLibrary')
+
+include ':UtilsLibrary'
+project(':UtilsLibrary').projectDir = new File(settingsDir, '../CaojunLibrary/UtilsLibrary')

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">隨機中文名</string>
+    <string name="surname">姓氏</string>
+    <string name="name">名字</string>
+    <string name="generate">取名(%s)</string>
+    <string name="ad_no_loaded">廣告未加載，請等一會兒或者明天。</string>
+</resources>

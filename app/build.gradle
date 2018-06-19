@@ -1,0 +1,42 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion rootProject.ext.sdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        applicationId "org.caojun.rcn"
+        minSdkVersion 14
+        targetSdkVersion rootProject.ext.sdkVersion
+        versionCode 4
+        versionName "1.1.1"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    android {
+        lintOptions {
+            checkReleaseBuilds false
+            abortOnError false
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:appcompat-v7:$androidsupport_version"
+    implementation 'com.j256.ormlite:ormlite-android:latest.release'
+    implementation 'com.luhuiguo:chinese-utils:latest.release'
+    implementation 'com.google.android.gms:play-services-ads:latest.release'
+    implementation 'com.github.zhaokaiqiang.klog:library:latest.release'
+    implementation 'org.jetbrains.anko:anko-common:latest.release'
+    implementation project(':DiceLibrary')
+    implementation project(':WidgetLibrary')
+    implementation project(':UtilsLibrary')
+}

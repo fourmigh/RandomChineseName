@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="surname_type">
+        <item>單姓</item>
+        <item>複姓</item>
+        <item>隨機</item>
+        <item>自定義</item>
+    </string-array>
+
+    <string-array name="name_type">
+        <item>單名</item>
+        <item>雙名</item>
+        <item>疊名</item>
+        <item>隨機</item>
+        <item>自定義</item>
+    </string-array>
+</resources>
