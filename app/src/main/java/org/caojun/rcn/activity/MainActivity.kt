@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
 import android.text.TextUtils
+import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.RadioButton
 import com.google.android.gms.ads.AdListener
@@ -27,7 +29,6 @@ import org.jetbrains.anko.toast
 
 class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
 
-//    private var btnGenerate:Button? = null
     private var isSurnameChecked: Boolean = false
     private var isNameChecked: Boolean = false
     private var mRewardedVideoAd: RewardedVideoAd? = null
@@ -70,25 +71,57 @@ class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
             etName.isEnabled = index == group.childCount - 1
         }
 
-        btnSurname.setOnClickListener { showExplain(etSurname.text.toString()) }
+//        btnSurname.setOnClickListener { showExplain(etSurname.text.toString()) }
 
-        btnSurname.setOnLongClickListener {
-            showFullName(etSurname, etName)
-            true
-        }
+//        btnSurname.setOnLongClickListener {
+//            showFullName(etSurname, etName)
+//            true
+//        }
 
-        btnName.setOnClickListener { showExplain(etName.text.toString()) }
+//        btnName.setOnClickListener { showExplain(etName.text.toString()) }
 
-        btnName.setOnLongClickListener {
-            showExplain(etName.text.toString(), true)
-            true
-        }
+//        btnName.setOnLongClickListener {
+//            showExplain(etName.text.toString(), true)
+//            true
+//        }
 
         etSurname.isEnabled = false
         etName.isEnabled = false
         btnGenerate?.isEnabled = isSurnameChecked and isNameChecked
         btnGenerate?.setOnClickListener { doGenerate(rgSurname, etSurname, rgName, etName) }
         checkButtonCount(false)
+
+        etSurname.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                btnSearchSurname.text = s.toString()
+                btnMeanSurname.text = s.toString()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+
+        etName.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                btnSearchName.text = s.toString()
+                btnMeanName.text = s.toString()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+
+        btnMeanSurname.setOnClickListener { showExplain(btnMeanSurname.text.toString()) }
+        btnMeanName.setOnClickListener { showExplain(btnMeanName.text.toString()) }
+
+        btnSearchSurname.setOnClickListener { showExplain(btnSearchSurname.text.toString(), true) }
+        btnSearchName.setOnClickListener { showExplain(btnSearchName.text.toString(), true) }
     }
 
     private fun doGenerate(rgSurname:MultiRadioGroup, etSurname:EditText, rgName:MultiRadioGroup, etName:EditText) {
@@ -133,17 +166,17 @@ class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
         WebViewDialog.show(this, url)
     }
 
-    private fun showFullName(etSurname: EditText, etName: EditText) {
-        val surname = etSurname.text.toString()
-        if (TextUtils.isEmpty(surname)) {
-            return
-        }
-        val name = etName.text.toString()
-        if (TextUtils.isEmpty(name)) {
-            return
-        }
-        showExplain(surname + name, true)
-    }
+//    private fun showFullName(etSurname: EditText, etName: EditText) {
+//        val surname = etSurname.text.toString()
+//        if (TextUtils.isEmpty(surname)) {
+//            return
+//        }
+//        val name = etName.text.toString()
+//        if (TextUtils.isEmpty(name)) {
+//            return
+//        }
+//        showExplain(surname + name, true)
+//    }
 
     private fun checkButtonEnable(rgSurname:MultiRadioGroup, rgName:MultiRadioGroup) {
         btnGenerate?.isEnabled = isSurnameChecked and isNameChecked
@@ -225,15 +258,6 @@ class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
 
     private fun loadAd() {
         val adRequest = AdRequest.Builder().build()
-//        val adRequest = AdRequest.Builder().setRequestAgent("android_studio:ad_template").build()
-//        val adRequest = AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build()
-//        if (loadVideo) {
-//            if (!mRewardedVideoAd!!.isLoaded) {
-//                mRewardedVideoAd?.loadAd(getString(R.string.admob_video_unit_id), adRequest)
-//            }
-//        } else if (!mInterstitialAd!!.isLoaded) {
-//            mInterstitialAd?.loadAd(adRequest)
-//        }
         if (!mRewardedVideoAd!!.isLoaded) {
             mRewardedVideoAd?.loadAd(getString(R.string.admob_video_unit_id), adRequest)
         }
@@ -243,14 +267,14 @@ class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
     }
 
     private fun showAd() {
-        if (mRewardedVideoAd!!.isLoaded) {
-            mRewardedVideoAd?.show()
-        } else if (mInterstitialAd!!.isLoaded) {
-            mInterstitialAd?.show()
-        } else {
-            loadAd()
+        when {
+            mRewardedVideoAd!!.isLoaded -> mRewardedVideoAd?.show()
+            mInterstitialAd!!.isLoaded -> mInterstitialAd?.show()
+            else -> {
+                loadAd()
 //            Toast.makeText(this, R.string.ad_no_loaded, Toast.LENGTH_SHORT).show()
-            toast(R.string.ad_no_loaded)
+                toast(R.string.ad_no_loaded)
+            }
         }
     }
 

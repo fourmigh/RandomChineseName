@@ -6,4 +6,5 @@
     <string name="generate">取名(%s)</string>
     <string name="ad_no_loaded">廣告未加載，請等一會兒或者明天。</string>
     <string name="search">蒐索</string>
+    <string name="meaning">含義</string>
 </resources>
