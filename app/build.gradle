@@ -8,10 +8,10 @@ android {
 
     defaultConfig {
         applicationId "org.caojun.rcn"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion rootProject.ext.sdkVersion
-        versionCode 5
-        versionName "1.2.0"
+        versionCode 6
+        versionName "1.2.1"
     }
     buildTypes {
         release {
@@ -34,7 +34,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$androidsupport_version"
     implementation 'com.j256.ormlite:ormlite-android:latest.release'
     implementation 'com.luhuiguo:chinese-utils:latest.release'
-    implementation 'com.google.android.gms:play-services-ads:latest.release'
+//    implementation 'com.google.android.gms:play-services-ads:latest.release'
     implementation 'com.github.zhaokaiqiang.klog:library:latest.release'
     implementation 'org.jetbrains.anko:anko-common:latest.release'
     implementation project(':DiceLibrary')

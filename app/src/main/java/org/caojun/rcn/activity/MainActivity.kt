@@ -9,15 +9,15 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.RadioButton
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.reward.RewardItem
-import com.google.android.gms.ads.reward.RewardedVideoAd
-import com.google.android.gms.ads.reward.RewardedVideoAdListener
+//import com.google.android.gms.ads.AdListener
+//import com.google.android.gms.ads.AdRequest
+//import com.google.android.gms.ads.MobileAds
+//import com.google.android.gms.ads.reward.RewardItem
+//import com.google.android.gms.ads.reward.RewardedVideoAd
+//import com.google.android.gms.ads.reward.RewardedVideoAdListener
 import org.caojun.rcn.utils.ChineseNameUtils
 import org.caojun.rcn.utils.DiaryUtils
-import com.google.android.gms.ads.InterstitialAd
+//import com.google.android.gms.ads.InterstitialAd
 import kotlinx.android.synthetic.main.activity_main.*
 import org.caojun.dialog.WebViewDialog
 import org.caojun.dice.DiceActivity
@@ -25,21 +25,21 @@ import org.caojun.rcn.R
 import org.caojun.rcn.ormlite.Diary
 import org.caojun.utils.TimeUtils
 import org.caojun.widget.MultiRadioGroup
-import org.jetbrains.anko.toast
+//import org.jetbrains.anko.toast
 
-class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
+class MainActivity : AppCompatActivity()/*, RewardedVideoAdListener*/ {
 
     private var isSurnameChecked: Boolean = false
     private var isNameChecked: Boolean = false
-    private var mRewardedVideoAd: RewardedVideoAd? = null
-    private var mInterstitialAd: InterstitialAd? = null
-    private var isRewarded: Boolean = false
+//    private var mRewardedVideoAd: RewardedVideoAd? = null
+//    private var mInterstitialAd: InterstitialAd? = null
+//    private var isRewarded: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initAd()
+//        initAd()
 
         val surnameType: Array<out String> = resources.getStringArray(R.array.surname_type)
         val rbSurnames: Array<RadioButton?> = arrayOfNulls(surnameType.size)
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
         etName.isEnabled = false
         btnGenerate?.isEnabled = isSurnameChecked and isNameChecked
         btnGenerate?.setOnClickListener { doGenerate(rgSurname, etSurname, rgName, etName) }
-        checkButtonCount(false)
+//        checkButtonCount(false)
 
         etSurname.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -125,10 +125,10 @@ class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
     }
 
     private fun doGenerate(rgSurname:MultiRadioGroup, etSurname:EditText, rgName:MultiRadioGroup, etName:EditText) {
-        if (checkButtonCount(true)) {
-            showAd()
-            return
-        }
+//        if (checkButtonCount(true)) {
+//            showAd()
+//            return
+//        }
         val surnameType = rgSurname.indexOfChild(rgSurname.findViewById(rgSurname.checkedRadioButtonId))
         if (surnameType != ChineseNameUtils.Type_Surname_Custom) {
             val surname = ChineseNameUtils.getSurname(this, surnameType)
@@ -190,123 +190,123 @@ class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
         }
     }
 
-    private fun checkButtonCount(isDone:Boolean): Boolean {
-        val diary = DiaryUtils.queryToday(this)
-        if (diary == null) {
-            //当天第一次打开
-            doDice(1)
-            return false
-        }
-        val count = diary.cntName
-        if (isDone && diary.cntName > 0) {
-            diary.cntName--
-            DiaryUtils.update(this, diary)
-        }
-        btnGenerate?.text = String.format(getString(R.string.generate), diary.cntName.toString())
-        return count <= 0
-    }
-
-    //广告
-    override fun onResume() {
-        mRewardedVideoAd?.resume(this)
-        super.onResume()
-    }
-
-    override fun onPause() {
-        mRewardedVideoAd?.pause(this)
-        super.onPause()
-    }
-
-    override fun onDestroy() {
-        mRewardedVideoAd?.destroy(this)
-        super.onDestroy()
-    }
-
-    private fun initAd() {
-//        MobileAds.initialize(this, getString(R.string.admob_app_id));
-        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
-        mRewardedVideoAd?.rewardedVideoAdListener = this
-
-        mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd?.adUnitId = getString(R.string.admob_page_unit_id)
-        mInterstitialAd?.adListener = object : AdListener() {
-            override fun onAdClosed() {
-                doDice(1)
-            }
-
-            override fun onAdImpression() {
-            }
-
-            override fun onAdLeftApplication() {
-            }
-
-            override fun onAdClicked() {
-            }
-
-            override fun onAdFailedToLoad(p0: Int) {
-                loadAd()
-            }
-
-            override fun onAdOpened() {
-            }
-
-            override fun onAdLoaded() {
-            }
-        }
-        loadAd()
-    }
-
-    private fun loadAd() {
-        val adRequest = AdRequest.Builder().build()
-        if (!mRewardedVideoAd!!.isLoaded) {
-            mRewardedVideoAd?.loadAd(getString(R.string.admob_video_unit_id), adRequest)
-        }
-        if (!mInterstitialAd!!.isLoaded) {
-            mInterstitialAd?.loadAd(adRequest)
-        }
-    }
-
-    private fun showAd() {
-        when {
-            mRewardedVideoAd!!.isLoaded -> mRewardedVideoAd?.show()
-            mInterstitialAd!!.isLoaded -> mInterstitialAd?.show()
-            else -> {
-                loadAd()
-//            Toast.makeText(this, R.string.ad_no_loaded, Toast.LENGTH_SHORT).show()
-                toast(R.string.ad_no_loaded)
-            }
-        }
-    }
-
-    //视频式广告
-    override fun onRewardedVideoAdClosed() {
-        if (isRewarded) {
-            doDice(2)
-        }
-    }
-
-    override fun onRewardedVideoAdLeftApplication() {
-    }
-
-    override fun onRewardedVideoCompleted() {
-    }
-
-    override fun onRewardedVideoAdLoaded() {
-    }
-
-    override fun onRewardedVideoAdOpened() {
-    }
-
-    override fun onRewarded(p0: RewardItem?) {
-        isRewarded = true
-    }
-
-    override fun onRewardedVideoStarted() {
-    }
-
-    override fun onRewardedVideoAdFailedToLoad(p0: Int) {
-        loadAd()
-    }
+//    private fun checkButtonCount(isDone:Boolean): Boolean {
+//        val diary = DiaryUtils.queryToday(this)
+//        if (diary == null) {
+//            //当天第一次打开
+//            doDice(1)
+//            return false
+//        }
+//        val count = diary.cntName
+//        if (isDone && diary.cntName > 0) {
+//            diary.cntName--
+//            DiaryUtils.update(this, diary)
+//        }
+//        btnGenerate?.text = String.format(getString(R.string.generate), diary.cntName.toString())
+//        return count <= 0
+//    }
+//
+//    //广告
+//    override fun onResume() {
+//        mRewardedVideoAd?.resume(this)
+//        super.onResume()
+//    }
+//
+//    override fun onPause() {
+//        mRewardedVideoAd?.pause(this)
+//        super.onPause()
+//    }
+//
+//    override fun onDestroy() {
+//        mRewardedVideoAd?.destroy(this)
+//        super.onDestroy()
+//    }
+//
+//    private fun initAd() {
+////        MobileAds.initialize(this, getString(R.string.admob_app_id));
+//        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(this)
+//        mRewardedVideoAd?.rewardedVideoAdListener = this
+//
+//        mInterstitialAd = InterstitialAd(this)
+//        mInterstitialAd?.adUnitId = getString(R.string.admob_page_unit_id)
+//        mInterstitialAd?.adListener = object : AdListener() {
+//            override fun onAdClosed() {
+//                doDice(1)
+//            }
+//
+//            override fun onAdImpression() {
+//            }
+//
+//            override fun onAdLeftApplication() {
+//            }
+//
+//            override fun onAdClicked() {
+//            }
+//
+//            override fun onAdFailedToLoad(p0: Int) {
+//                loadAd()
+//            }
+//
+//            override fun onAdOpened() {
+//            }
+//
+//            override fun onAdLoaded() {
+//            }
+//        }
+//        loadAd()
+//    }
+//
+//    private fun loadAd() {
+//        val adRequest = AdRequest.Builder().build()
+//        if (!mRewardedVideoAd!!.isLoaded) {
+//            mRewardedVideoAd?.loadAd(getString(R.string.admob_video_unit_id), adRequest)
+//        }
+//        if (!mInterstitialAd!!.isLoaded) {
+//            mInterstitialAd?.loadAd(adRequest)
+//        }
+//    }
+//
+//    private fun showAd() {
+//        when {
+//            mRewardedVideoAd!!.isLoaded -> mRewardedVideoAd?.show()
+//            mInterstitialAd!!.isLoaded -> mInterstitialAd?.show()
+//            else -> {
+//                loadAd()
+////            Toast.makeText(this, R.string.ad_no_loaded, Toast.LENGTH_SHORT).show()
+//                toast(R.string.ad_no_loaded)
+//            }
+//        }
+//    }
+//
+//    //视频式广告
+//    override fun onRewardedVideoAdClosed() {
+//        if (isRewarded) {
+//            doDice(2)
+//        }
+//    }
+//
+//    override fun onRewardedVideoAdLeftApplication() {
+//    }
+//
+//    override fun onRewardedVideoCompleted() {
+//    }
+//
+//    override fun onRewardedVideoAdLoaded() {
+//    }
+//
+//    override fun onRewardedVideoAdOpened() {
+//    }
+//
+//    override fun onRewarded(p0: RewardItem?) {
+//        isRewarded = true
+//    }
+//
+//    override fun onRewardedVideoStarted() {
+//    }
+//
+//    override fun onRewardedVideoAdFailedToLoad(p0: Int) {
+//        loadAd()
+//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == DiceActivity.RequestCode_Dice && resultCode == Activity.RESULT_OK && data != null) {
@@ -320,7 +320,7 @@ class MainActivity : AppCompatActivity(), RewardedVideoAdListener {
                 diary.cntName = dice[0].toByte()
                 DiaryUtils.update(this, diary)
             }
-            checkButtonCount(false)
+//            checkButtonCount(false)
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
